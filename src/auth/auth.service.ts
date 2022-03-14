@@ -16,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService
   ){}
   
-  async login(loginDTO: LoginDTO): Promise<string> {
+  async login(loginDTO: LoginDTO): Promise<{token: string, user: User}> {
     const { password, username } = loginDTO
     const user = await this.userRepository.getUserByUsername(username)
 
@@ -24,9 +24,10 @@ export class AuthService {
       const payload: JwtPayload = { username }
       
       const token = await this.jwtService.sign(payload)
-      return token;
+      delete user.password
+      return {token, user};
     } else {
-      throw new UnauthorizedException('Invalid Credentials')
+      throw new UnauthorizedException('Invalid credentials')
     }
   }
   
