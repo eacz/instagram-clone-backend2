@@ -6,6 +6,8 @@ async function bootstrap() {
   const logger = new Logger()
   const port = process.env.PORT || 4000
   const app = await NestFactory.create(AppModule);
+
+  app.setGlobalPrefix('api')
   
   //TODO: configure origins
   app.enableCors()
