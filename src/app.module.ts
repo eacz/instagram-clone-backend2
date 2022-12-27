@@ -9,7 +9,7 @@ import RequestsMiddleware from './middlewares/requests-logger.middleware'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      envFilePath: [`.${process.env.STAGE}.env`, process.env.STAGE === 'dev' ? '.env' : ''],
       //TODO: config validationSchema
     }),
     TypeOrmModule.forRootAsync({
