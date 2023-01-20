@@ -5,6 +5,7 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { PostModule } from './post/post.module';
+import { CommonModule } from './common/common.module';
 import RequestsMiddleware from './middlewares/requests-logger.middleware'
 
 @Module({
@@ -36,6 +37,7 @@ import RequestsMiddleware from './middlewares/requests-logger.middleware'
     }),
     AuthModule,
     PostModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
