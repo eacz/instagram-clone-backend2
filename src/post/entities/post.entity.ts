@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { User } from 'src/auth/user.entity'
 
 @Entity({ name: 'post' })
@@ -6,8 +6,8 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column('text', { unique: true })
-  url: string
+  @Column('text', { array: true })
+  images: string[]
 
   @Column('int', { default: 0 })
   savedCount: number
@@ -26,6 +26,9 @@ export class Post {
 
   @ManyToOne(() => User, (user) => user.posts)
   user: User
-  //likes: User[]
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  likes: User[]
   //commments: Comment[]
 }
