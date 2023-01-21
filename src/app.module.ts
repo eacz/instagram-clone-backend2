@@ -1,14 +1,17 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
+import { PostModule } from './post/post.module';
+import { CommonModule } from './common/common.module';
+import RequestsMiddleware from './middlewares/requests-logger.middleware'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      envFilePath: [`.${process.env.STAGE}.env`, process.env.STAGE === 'dev' ? '.env' : ''],
       //TODO: config validationSchema
     }),
     TypeOrmModule.forRootAsync({
@@ -33,8 +36,14 @@ import { AuthModule } from './auth/auth.module'
       },
     }),
     AuthModule,
+    PostModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestsMiddleware).forRoutes('*')
+  }
+}

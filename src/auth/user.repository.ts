@@ -15,6 +15,7 @@ export class UserRepository extends Repository<User> {
     let user = this.create({...signupDTO, password: hashedPassword})
     try {
       user = await this.save(user)
+      delete user.password
       return user
     } catch (error) {
       if(error.code === '23505') {
