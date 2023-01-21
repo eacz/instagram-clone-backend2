@@ -9,7 +9,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/login')
-  login(@Body() loginDTO: LoginDTO): Promise<{ token: string; user: User }> {
+  login(@Body() loginDTO: LoginDTO): Promise<{ token: string }> {
     return this.authService.login(loginDTO)
   }
 
@@ -18,7 +18,7 @@ export class AuthController {
     return this.authService.signup(signupDTO)
   }
   @Post('/renew-token')
-  renewToken(@Body('token') token: string): Promise<{ user: User; token: string }> {
+  renewToken(@Body('token') token: string): Promise<{ token: string }> {
     return this.authService.renewToken(token)
   }
 }
