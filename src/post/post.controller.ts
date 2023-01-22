@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  Query,
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 
@@ -20,6 +21,7 @@ import { FilesService } from '../common/files.service'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { getUser } from '../auth/decorators/get-user.decorator'
 import { User } from 'src/auth/user.entity'
+import { PaginationDto } from '../common/dto/pagination.dto'
 
 @Controller('post')
 export class PostController {
@@ -42,23 +44,15 @@ export class PostController {
     return this.postService.create(createPostDto, user)
   }
 
-  @Get()
-  findAll() {
-    return this.postService.findAll()
+  @Get('current-user-posts')
+  @Auth()
+  getPostsForUser(@Query() paginationDto: PaginationDto, @getUser() user: User) {
+    return this.postService.getPostsForUser(paginationDto, user)
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id)
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto)
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postService.remove(+id)
+  @Get('by-user/:id')
+  @Auth()
+  getPostsByUser(@Query() paginationDto: PaginationDto, @Param('id') id: string) {
+    return this.postService.getPostsByUser(paginationDto, id)
   }
 }

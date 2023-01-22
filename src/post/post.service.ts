@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { User } from 'src/auth/user.entity'
 import { CreatePostDto } from './dto/create-post.dto'
-import { UpdatePostDto } from './dto/update-post.dto'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Post } from './entities/post.entity'
 import { PostRepository } from './post.repository'
+import { PaginationDto } from '../common/dto/pagination.dto'
 
 @Injectable()
 export class PostService {
@@ -15,19 +13,11 @@ export class PostService {
     return post
   }
 
-  findAll() {
-    return `This action returns all post`
+  async getPostsForUser(paginationDto: PaginationDto, user: User) {
+    return this.postRepository.getPostsForUser(paginationDto, user.id)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`
-  }
-
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`
+  async getPostsByUser(paginationDto: PaginationDto, id: string) {
+    return this.postRepository.getPostsForUser(paginationDto, +id)
   }
 }
