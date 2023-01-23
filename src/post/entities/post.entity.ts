@@ -24,7 +24,7 @@ export class Post {
   @Column('boolean', { default: true })
   canBeCommented?: boolean
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { eager: true })
   user: User
 
   @ManyToMany(() => User, { cascade: true, eager: true })

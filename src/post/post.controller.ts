@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFiles, Query } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseInterceptors,
+  UploadedFiles,
+  Query,
+  Put,
+} from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 
 import { PostService } from './post.service'
@@ -8,6 +18,7 @@ import { Auth } from 'src/auth/decorators/auth.decorator'
 import { getUser } from '../auth/decorators/get-user.decorator'
 import { User } from 'src/auth/user.entity'
 import { PaginationDto } from '../common/dto/pagination.dto'
+import { UpdatePostDto } from './dto/update-post.dto'
 
 @Controller('post')
 export class PostController {
@@ -41,10 +52,16 @@ export class PostController {
   likePost(@Param('id') id: string, @getUser() user: User) {
     return this.postService.likePost(+id, user)
   }
-  
+
   @Post(':id/dislike')
   @Auth()
   dislikePost(@Param('id') id: string, @getUser() user: User) {
     return this.postService.dislikePost(+id, user)
+  }
+
+  @Put(':id')
+  @Auth()
+  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto, @getUser() user: User) {
+    return this.postService.update(id, updatePostDto, user)
   }
 }

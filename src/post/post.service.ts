@@ -4,6 +4,7 @@ import { CreatePostDto } from './dto/create-post.dto'
 import { PostRepository } from './post.repository'
 import { PaginationDto } from '../common/dto/pagination.dto'
 import { FilesService } from 'src/common/files.service'
+import { UpdatePostDto } from './dto/update-post.dto'
 
 @Injectable()
 export class PostService {
@@ -32,8 +33,12 @@ export class PostService {
   async likePost(postId: number, user: User) {
     await this.postRepository.likePost(postId, user)
   }
-  
+
   async dislikePost(postId: number, user: User) {
     await this.postRepository.dislikePost(postId, user.id)
+  }
+
+  async update(id: string, updatePostDto: UpdatePostDto, user: User) {
+    return this.postRepository.updatePost(+id, updatePostDto, user)
   }
 }

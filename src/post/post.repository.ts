@@ -3,7 +3,8 @@ import { Post } from './entities/post.entity'
 import { CreatePostDto } from './dto/create-post.dto'
 import { User } from 'src/auth/user.entity'
 import { PaginationDto } from '../common/dto/pagination.dto'
-import { NotFoundException } from '@nestjs/common'
+import { ForbiddenException, NotFoundException } from '@nestjs/common'
+import { UpdatePostDto } from './dto/update-post.dto'
 
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
@@ -41,6 +42,21 @@ export class PostRepository extends Repository<Post> {
   async dislikePost(postId: number, userId: number) {
     const post = await this.preload({ id: postId })
     post.likes = post.likes.filter((user) => user.id !== userId)
+    await this.save(post)
+    return post
+  }
+
+  async updatePost(id: number, updatePostDto: UpdatePostDto, user: User) {
+    const post = await this.preload({ id, ...updatePostDto })
+
+    if (!post) {
+      throw new NotFoundException(`There is no post with id ${id}`)
+    }
+
+    if (post.user.id !== user.id) {
+      throw new ForbiddenException(`You're not allowed to edit this post`)
+    }
+
     await this.save(post)
     return post
   }
