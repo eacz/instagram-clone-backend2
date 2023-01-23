@@ -27,7 +27,7 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: User
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, { cascade: true, eager: true })
   @JoinTable()
   likes: User[]
   //commments: Comment[]

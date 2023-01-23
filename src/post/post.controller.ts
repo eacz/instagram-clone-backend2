@@ -16,7 +16,7 @@ export class PostController {
   @Post()
   @Auth()
   @UseInterceptors(FilesInterceptor('images', 5, { fileFilter: fileExtensionFilter, limits: { files: 5 } }))
-  async create(
+  create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFiles() images: Array<Express.Multer.File>,
     @getUser() user: User
@@ -34,5 +34,17 @@ export class PostController {
   @Auth()
   getPostsByUser(@Query() paginationDto: PaginationDto, @Param('id') id: string) {
     return this.postService.getPostsByUser(paginationDto, id)
+  }
+
+  @Post(':id/like')
+  @Auth()
+  likePost(@Param('id') id: string, @getUser() user: User) {
+    return this.postService.likePost(+id, user)
+  }
+  
+  @Post(':id/dislike')
+  @Auth()
+  dislikePost(@Param('id') id: string, @getUser() user: User) {
+    return this.postService.dislikePost(+id, user)
   }
 }
