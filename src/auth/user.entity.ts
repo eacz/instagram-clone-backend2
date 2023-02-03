@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Post } from 'src/post/entities/post.entity'
 
 @Entity({ name: 'user' })
@@ -20,4 +20,12 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[]
+
+  @ManyToMany(() => User, (user) => user.followers)
+  @JoinTable()
+  followers: User[]
+  
+  @ManyToMany(() => User, (user) => user.followers)
+  @JoinTable()
+  following: User[]
 }

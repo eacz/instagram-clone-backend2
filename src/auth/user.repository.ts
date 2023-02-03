@@ -3,6 +3,7 @@ import { User } from './user.entity'
 import { SignupDTO } from './dto/signupDTO'
 import * as bcrypt from 'bcrypt'
 import { ConflictException, InternalServerErrorException } from '@nestjs/common'
+import { UpdateUserDto } from '../user/dto/update-user.dto'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -18,13 +19,7 @@ export class UserRepository extends Repository<User> {
       delete user.password
       return user
     } catch (error) {
-      if (error.code === '23505') {
-        let message = error.detail.includes('username') ? 'Username' : 'Email'
-        message += ' already used'
-        throw new ConflictException(message)
-      } else {
-        throw new InternalServerErrorException()
-      }
+      this.handleErrors(error)
     }
   }
 
@@ -34,5 +29,26 @@ export class UserRepository extends Repository<User> {
       select: ['email', 'name', 'password', 'username'],
     })
     return user
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.preload({ id, ...updateUserDto })
+      await this.save(user)
+      delete user.password
+      return user
+    } catch (error) {
+      this.handleErrors(error)
+    }
+  }
+
+  private handleErrors(error: any) {
+    if (error.code === '23505') {
+      let message = error.detail.includes('username') ? 'Username' : 'Email'
+      message += ' already used'
+      throw new ConflictException(message)
+    } else {
+      throw new InternalServerErrorException()
+    }
   }
 }
