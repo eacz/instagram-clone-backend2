@@ -2,27 +2,28 @@ import { Injectable } from '@nestjs/common'
 import { User } from 'src/auth/user.entity'
 import { UserRepository } from 'src/auth/user.repository'
 import { UserSeed } from './data/users'
+import { PostRepository } from '../post/post.repository'
 
 @Injectable()
 export class SeedService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly postRepository: PostRepository
+  ) {}
+
   async executeAllSeeds() {
-    await this.purgeDatabase()
-    const users = await this.userSeed()
-    console.log({ users })
-  }
-
-  private async purgeDatabase() {
-    await this.userRepository.clear()
-  }
-
-  async userSeed(): Promise<User[]> {
+    await this.deleteAllTables()
     const users: User[] = []
-    UserSeed.forEach(async (u) => {
+
+    for (const u of UserSeed) {
       const user = this.userRepository.create(u)
       await this.userRepository.save(user)
       users.push(user)
-    })
-    return users
+    }
+  }
+
+  async deleteAllTables() {
+    await this.postRepository.delete({})
+    await this.userRepository.delete({})
   }
 }

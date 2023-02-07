@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module'
 import { PostModule } from './post/post.module'
 import { CommonModule } from './common/common.module'
 import { UserModule } from './user/user.module'
+import { SeedModule } from './seed/seed.module'
 import RequestsMiddleware from './middlewares/requests-logger.middleware'
 
 @Module({
@@ -40,6 +41,7 @@ import RequestsMiddleware from './middlewares/requests-logger.middleware'
     PostModule,
     CommonModule,
     UserModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

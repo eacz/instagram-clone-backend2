@@ -24,10 +24,10 @@ export class Post {
   @Column('boolean', { default: true })
   canBeCommented?: boolean
 
-  @ManyToOne(() => User, (user) => user.posts, { eager: true })
+  @ManyToOne(() => User, (user) => user.posts, { eager: true, onDelete: 'CASCADE', })
   user: User
 
-  @ManyToMany(() => User, { cascade: true, eager: true })
+  @ManyToMany(() => User, { cascade: true, eager: true, onDelete: 'CASCADE' })
   @JoinTable()
   likes: User[]
   //commments: Comment[]
