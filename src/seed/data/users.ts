@@ -1,5 +1,13 @@
 import { User } from '../../auth/user.entity'
-export const UserSeed: User[] = [
+
+export interface IUserSeed {
+  username: string
+  name: string
+  email: string
+  password: string
+}
+
+export const UserSeed: IUserSeed[] = [
   {
     username: 'eacz',
     name: 'Esteban',
