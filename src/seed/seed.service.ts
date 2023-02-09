@@ -4,6 +4,7 @@ import { UserRepository } from 'src/auth/user.repository'
 import { Post } from 'src/post/entities/post.entity'
 import { PostRepository } from '../post/post.repository'
 import { UserSeed, SeedPosts } from './data'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class SeedService {
@@ -19,6 +20,10 @@ export class SeedService {
 
     for (const u of UserSeed) {
       const user = this.userRepository.create(u)
+      const salt = await bcrypt.genSalt()
+      const hashedPassword = await bcrypt.hash(user.password, salt)
+      user.password = hashedPassword
+
       await this.userRepository.save(user)
       users.push(user)
     }
