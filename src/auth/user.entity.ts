@@ -4,7 +4,7 @@ import { Post } from 'src/post/entities/post.entity'
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn()
-  id?: number
+  id: number
 
   @Column({ unique: true })
   username: string
@@ -19,13 +19,13 @@ export class User {
   password: string
 
   @OneToMany(() => Post, (post) => post.user, { onDelete: 'CASCADE', cascade: true })
-  posts?: Post[]
+  posts: Post[]
 
-  @ManyToMany(() => User, (user) => user.followers, { onDelete: 'CASCADE', })
+  @ManyToMany(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   @JoinTable()
-  followers?: User[]
+  followers: User[]
 
-  @ManyToMany(() => User, (user) => user.followers, { onDelete: 'CASCADE', cascade: true })
+  @ManyToMany(() => User, (user) => user.following, { onDelete: 'CASCADE' })
   @JoinTable()
-  following?: User[]
+  following: User[]
 }

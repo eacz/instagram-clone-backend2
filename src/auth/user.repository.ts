@@ -2,7 +2,7 @@ import { EntityRepository, Repository } from 'typeorm'
 import { User } from './user.entity'
 import { SignupDTO } from './dto/signupDTO'
 import * as bcrypt from 'bcrypt'
-import { ConflictException, InternalServerErrorException } from '@nestjs/common'
+import { ConflictException, InternalServerErrorException, BadRequestException } from '@nestjs/common'
 import { UpdateUserDto } from '../user/dto/update-user.dto'
 
 @EntityRepository(User)
@@ -42,13 +42,37 @@ export class UserRepository extends Repository<User> {
     }
   }
 
+  async followUser(userId: number, user: User) {
+    try {
+      const userFollowing = await this.findOne(user.id, {
+        relations: ['following', 'followers'],
+        loadRelationIds: true,
+      })
+      const userToFollow = await this.findOne(userId, {
+        relations: ['following', 'followers'],
+        loadRelationIds: true,
+      })
+
+      //TODO: fix this type error properly xd
+      if (userFollowing.following.includes(userId as unknown as User)) {
+        throw new BadRequestException(`Already following user with id ${userId}`)
+      }
+
+      const queryBuilder = this.createQueryBuilder()
+      await queryBuilder.relation('following').of(userFollowing).add(userId)
+      await queryBuilder.relation('followers').of(userToFollow).add(userFollowing.id)
+    } catch (error) {
+      this.handleErrors(error)
+    }
+  }
+
   private handleErrors(error: any) {
     if (error.code === '23505') {
       let message = error.detail.includes('username') ? 'Username' : 'Email'
       message += ' already used'
       throw new ConflictException(message)
     } else {
-      throw new InternalServerErrorException()
+      throw error
     }
   }
 }
