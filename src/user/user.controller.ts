@@ -21,7 +21,9 @@ export class UserController {
     return this.userService.followUser(userId, user)
   }
 
-  @Post('/unfollow-user')
+  @Post('/unfollow-user/:userId')
   @Auth()
-  unfollowUser() {}
+  unollowUser(@getUser() user: User, @Param('userId', ParseIntPipe) userId: number) {
+    return this.userService.unfollowUser(userId, user)
+  }
 }

@@ -66,6 +66,26 @@ export class UserRepository extends Repository<User> {
     }
   }
 
+  async unfollowUser(userId: number, user: User) {
+    const userFollowing = await this.findOne(user.id, {
+      relations: ['following', 'followers'],
+      loadRelationIds: true,
+    })
+    const userToFollow = await this.findOne(userId, {
+      relations: ['following', 'followers'],
+      loadRelationIds: true,
+    })
+
+    //TODO: fix this type error properly xd
+    if (!userFollowing.following.includes(userId as unknown as User)) {
+      throw new BadRequestException(`Not following user with id ${userId}`)
+    }
+
+    const queryBuilder = this.createQueryBuilder()
+    await queryBuilder.relation('following').of(userFollowing).remove(userId)
+    await queryBuilder.relation('followers').of(userToFollow).remove(userFollowing.id)
+  }
+
   private handleErrors(error: any) {
     if (error.code === '23505') {
       let message = error.detail.includes('username') ? 'Username' : 'Email'

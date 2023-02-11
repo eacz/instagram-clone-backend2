@@ -17,4 +17,11 @@ export class UserService {
     }
     await this.userRepository.followUser(userId, user)
   }
+ 
+  async unfollowUser(userId: number, user: User) {
+    if (userId === user.id) {
+      throw new BadRequestException("You can't unfollow yourself xd")
+    }
+    await this.userRepository.unfollowUser(userId, user)
+  }
 }
