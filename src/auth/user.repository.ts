@@ -2,8 +2,9 @@ import { EntityRepository, Repository } from 'typeorm'
 import { User } from './user.entity'
 import { SignupDTO } from './dto/signupDTO'
 import * as bcrypt from 'bcrypt'
-import { ConflictException, InternalServerErrorException, BadRequestException } from '@nestjs/common'
+import { ConflictException, BadRequestException } from '@nestjs/common'
 import { UpdateUserDto } from '../user/dto/update-user.dto'
+import { getAcountCount } from 'src/user/interfaces'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -84,6 +85,21 @@ export class UserRepository extends Repository<User> {
     const queryBuilder = this.createQueryBuilder()
     await queryBuilder.relation('following').of(userFollowing).remove(userId)
     await queryBuilder.relation('followers').of(userToFollow).remove(userFollowing.id)
+  }
+
+  async getAcountCount(user: User): Promise<getAcountCount> {
+    const userPopulated = await this.findOne(user.id, {
+      //TODO: investigate why this doesn't work
+      //select: ['following', 'followers', 'posts'],
+      relations: ['following', 'followers', 'posts'],
+      loadRelationIds: true,
+    })
+
+    return {
+      followersCount: userPopulated.followers.length,
+      followingCount: userPopulated.following.length,
+      postsCount: userPopulated.posts.length,
+    }
   }
 
   private handleErrors(error: any) {
