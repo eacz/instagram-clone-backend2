@@ -3,11 +3,12 @@ import {
   Get,
   Post,
   Body,
+  Put,
+  Delete,
   Param,
   UseInterceptors,
   UploadedFiles,
   Query,
-  Put,
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 
@@ -19,6 +20,7 @@ import { getUser } from '../auth/decorators/get-user.decorator'
 import { User } from 'src/auth/user.entity'
 import { PaginationDto } from '../common/dto/pagination.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
+import { ParseIntPipe } from '@nestjs/common'
 
 @Controller('post')
 export class PostController {
@@ -63,5 +65,11 @@ export class PostController {
   @Auth()
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto, @getUser() user: User) {
     return this.postService.update(id, updatePostDto, user)
+  }
+
+  @Delete(':id')
+  @Auth()
+  delete(@Param('id', ParseIntPipe) id: number, @getUser() user: User) {
+    return this.postService.delete(id, user)
   }
 }

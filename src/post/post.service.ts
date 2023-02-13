@@ -41,4 +41,9 @@ export class PostService {
   async update(id: string, updatePostDto: UpdatePostDto, user: User) {
     return this.postRepository.updatePost(+id, updatePostDto, user)
   }
+
+  async delete(id: number, user: User) {
+    const post = await this.postRepository.deletePost(id, user)
+    await this.filesService.deleteImages(post.images)
+  }
 }

@@ -1,9 +1,10 @@
+import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { EntityRepository, Repository } from 'typeorm'
+
 import { Post } from './entities/post.entity'
 import { CreatePostDto } from './dto/create-post.dto'
 import { User } from 'src/auth/user.entity'
 import { PaginationDto } from '../common/dto/pagination.dto'
-import { ForbiddenException, NotFoundException } from '@nestjs/common'
 import { UpdatePostDto } from './dto/update-post.dto'
 
 @EntityRepository(Post)
@@ -59,5 +60,17 @@ export class PostRepository extends Repository<Post> {
 
     await this.save(post)
     return post
+  }
+
+  async deletePost(id: number, user: User) {
+    const post = await this.findOne(id)
+    if (!post) {
+      throw new NotFoundException(`There is no post with id ${id}`)
+    }
+    if (post.user.id !== user.id) {
+      throw new UnauthorizedException(`You're not allowed to delete this post`)
+    }
+    await this.remove(post)
+    return post;
   }
 }
