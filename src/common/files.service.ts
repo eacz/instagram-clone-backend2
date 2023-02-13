@@ -26,4 +26,20 @@ export class FilesService {
 
     return imagesUrls
   }
+
+  async deleteImage(photoUrl: string) {
+    try {
+      return await this.cloudinaryService.deleteImage(photoUrl)
+    } catch (error) {
+      throw new ServiceUnavailableException(
+        `There was a problem with the file upload provider, please try again later`
+      )
+    }
+  }
+
+  async deleteImages(photosUrls: string[]) {
+    for (let i = 0; i < photosUrls.length; i++) {
+      await this.deleteImage(photosUrls[i])
+    }
+  }
 }
