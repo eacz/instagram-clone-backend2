@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { getUser } from 'src/auth/decorators/get-user.decorator'
 import { User } from 'src/auth/user.entity'
-import { getAcountCount } from './interfaces'
+import { getAccountCount } from './interfaces'
 
 @Controller('user')
 export class UserController {
@@ -28,9 +28,9 @@ export class UserController {
     return this.userService.unfollowUser(userId, user)
   }
 
-  @Get('/get-account-count')
+  @Get('/get-account-count/:id')
   @Auth()
-  getAcountCount(@getUser() user: User): Promise<getAcountCount> {
-    return this.userService.getAcountCount(user)
+  getAccountCount(@Param('id', ParseIntPipe) id: number): Promise<getAccountCount> {
+    return this.userService.getAccountCount(id)
   }
 }

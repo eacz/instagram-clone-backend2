@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UserRepository } from '../auth/user.repository'
 import { User } from 'src/auth/user.entity'
-import { getAcountCount } from './interfaces'
+import { getAccountCount } from './interfaces'
 
 @Injectable()
 export class UserService {
@@ -26,7 +26,7 @@ export class UserService {
     await this.userRepository.unfollowUser(userId, user)
   }
 
-  async getAcountCount(user: User): Promise<getAcountCount> {
-    return this.userRepository.getAcountCount(user)
+  async getAccountCount(id: number): Promise<getAccountCount> {
+    return this.userRepository.getAccountCount(id)
   }
 }

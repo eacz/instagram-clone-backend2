@@ -1,1 +1,1 @@
-export * from './getAcountCount.interface'
+export * from './getAccountCount.interface'

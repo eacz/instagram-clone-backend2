@@ -2,9 +2,9 @@ import { EntityRepository, Repository } from 'typeorm'
 import { User } from './user.entity'
 import { SignupDTO } from './dto/signupDTO'
 import * as bcrypt from 'bcrypt'
-import { ConflictException, BadRequestException } from '@nestjs/common'
+import { ConflictException, BadRequestException, NotFoundException } from '@nestjs/common'
 import { UpdateUserDto } from '../user/dto/update-user.dto'
-import { getAcountCount } from 'src/user/interfaces'
+import { getAccountCount } from 'src/user/interfaces'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -87,18 +87,21 @@ export class UserRepository extends Repository<User> {
     await queryBuilder.relation('followers').of(userToFollow).remove(userFollowing.id)
   }
 
-  async getAcountCount(user: User): Promise<getAcountCount> {
-    const userPopulated = await this.findOne(user.id, {
+  async getAccountCount(id: number): Promise<getAccountCount> {
+    const user = await this.findOne(id, {
       //TODO: investigate why this doesn't work
       //select: ['following', 'followers', 'posts'],
       relations: ['following', 'followers', 'posts'],
       loadRelationIds: true,
     })
+    if (!user) {
+      throw new NotFoundException(`There is no user with id ${id}`)
+    }
 
     return {
-      followersCount: userPopulated.followers.length,
-      followingCount: userPopulated.following.length,
-      postsCount: userPopulated.posts.length,
+      followersCount: user.followers.length,
+      followingCount: user.following.length,
+      postsCount: user.posts.length,
     }
   }
 
