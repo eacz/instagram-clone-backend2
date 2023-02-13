@@ -25,7 +25,10 @@ export class SeedService {
     const posts: Post[] = []
 
     for (const u of UserSeed) {
-      const user = this.userRepository.create(u)
+      const user = this.userRepository.create({
+        ...u,
+        profilePicture: this.configService.get('DEFAULT_PROFILE_PICTURE') || null,
+      })
       const salt = await bcrypt.genSalt()
       const hashedPassword = await bcrypt.hash(user.password, salt)
       user.password = hashedPassword

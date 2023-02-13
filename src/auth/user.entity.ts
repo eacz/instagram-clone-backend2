@@ -18,6 +18,12 @@ export class User {
   @Column({ select: false })
   password: string
 
+  @Column({ nullable: true })
+  biography: string
+
+  @Column({ nullable: true })
+  profilePicture: string
+
   @OneToMany(() => Post, (post) => post.user, { onDelete: 'CASCADE', cascade: true })
   posts: Post[]
 

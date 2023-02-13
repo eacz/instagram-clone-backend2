@@ -1,8 +1,9 @@
 export interface IUserSeed {
-  username: string;
-  name: string;
-  email: string;
-  password: string;
+  username: string
+  name: string
+  email: string
+  password: string
+  biography?: string
 }
 
 export const UserSeed: IUserSeed[] = [
@@ -11,6 +12,7 @@ export const UserSeed: IUserSeed[] = [
     name: 'Esteban',
     email: 'email@email.com',
     password: 'Password1',
+    biography: "It's me!",
   },
   {
     username: 'tina',
@@ -23,6 +25,7 @@ export const UserSeed: IUserSeed[] = [
     name: 'Mimi',
     email: 'email3@email.com',
     password: 'Password1',
+    biography: "It's my cat!"
   },
   {
     username: 'Poli',
@@ -30,4 +33,4 @@ export const UserSeed: IUserSeed[] = [
     email: 'email4@email.com',
     password: 'Password1',
   },
-];
+]
