@@ -1,10 +1,22 @@
-import { Controller, Body, Patch, Param, Post, ParseIntPipe, Get } from '@nestjs/common'
+import {
+  Controller,
+  Body,
+  Patch,
+  Param,
+  Post,
+  ParseIntPipe,
+  Get,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { getUser } from 'src/auth/decorators/get-user.decorator'
 import { User } from 'src/auth/user.entity'
 import { getAccountCount } from './interfaces'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { fileExtensionFilter } from 'src/common/filters/fileExtension.filter'
 
 @Controller('user')
 export class UserController {
@@ -12,8 +24,13 @@ export class UserController {
 
   @Patch(':id')
   @Auth()
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto)
+  @UseInterceptors(FileInterceptor('profilePicture', { fileFilter: fileExtensionFilter }))
+  update(
+    @Body() updateUserDto: UpdateUserDto,
+    @Param('id') id: string,
+    @UploadedFile() profilePicture?: Express.Multer.File
+  ) {
+    return this.userService.update(+id, updateUserDto, profilePicture)
   }
 
   @Post('/follow-user/:userId')
