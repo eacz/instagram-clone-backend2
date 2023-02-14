@@ -1,5 +1,5 @@
 import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common'
-import { EntityRepository, Repository } from 'typeorm'
+import { EntityRepository, Repository, In } from 'typeorm'
 
 import { Post } from './entities/post.entity'
 import { CreatePostDto } from './dto/create-post.dto'
@@ -71,6 +71,18 @@ export class PostRepository extends Repository<Post> {
       throw new UnauthorizedException(`You're not allowed to delete this post`)
     }
     await this.remove(post)
-    return post;
+    return post
+  }
+
+  async getFeedPosts({ limit, offset }: PaginationDto, user: User) {
+    const posts = await this.find({
+      where: [{ id: In([...user.posts]) }, { user: In([...user.followers, ...user.following]) }],
+      skip: offset,
+      take: limit,
+      order: {
+        createdAt: 'DESC',
+      },
+    })
+    return posts
   }
 }

@@ -46,4 +46,9 @@ export class PostService {
     const post = await this.postRepository.deletePost(id, user)
     await this.filesService.deleteImages(post.images)
   }
+
+  async getFeedPosts(paginationDto: PaginationDto, user: User) {
+    const posts = await this.postRepository.getFeedPosts(paginationDto, user)
+    return posts
+  }
 }

@@ -49,6 +49,12 @@ export class PostController {
     return this.postService.getPostsByUser(paginationDto, id)
   }
 
+  @Get('feed')
+  @Auth()
+  getFeedPosts(@Query() paginationDto:PaginationDto, @getUser() user: User){
+    return this.postService.getFeedPosts(paginationDto, user)
+  }
+
   @Post(':id/like')
   @Auth()
   likePost(@Param('id') id: string, @getUser() user: User) {
