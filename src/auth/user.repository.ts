@@ -1,15 +1,15 @@
+import { ConflictException, BadRequestException, NotFoundException } from '@nestjs/common'
 import { EntityRepository, Repository } from 'typeorm'
+import * as bcrypt from 'bcrypt'
+
 import { User } from './user.entity'
 import { SignupDTO } from './dto/signupDTO'
-import * as bcrypt from 'bcrypt'
-import { ConflictException, BadRequestException, NotFoundException } from '@nestjs/common'
 import { UpdateUserDto } from '../user/dto/update-user.dto'
 import { getAccountCount } from 'src/user/interfaces'
-import { ConfigService } from '@nestjs/config'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  constructor(private readonly configService: ConfigService) {
+  constructor() {
     super()
   }
   async createUser(signupDTO: SignupDTO) {
@@ -17,11 +17,11 @@ export class UserRepository extends Repository<User> {
 
     const salt = await bcrypt.genSalt()
     const hashedPassword = await bcrypt.hash(password, salt)
-
+    
     let user = this.create({
       ...signupDTO,
       password: hashedPassword,
-      profilePicture: this.configService.get('DEFAULT_PROFILE_PICTURE') || null,
+      profilePicture: process.env.DEFAULT_PROFILE_PICTURE || null,
     })
 
     try {
