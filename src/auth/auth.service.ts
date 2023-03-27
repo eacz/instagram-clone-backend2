@@ -7,13 +7,15 @@ import { User } from './user.entity'
 import { UserRepository } from './user.repository'
 import * as bcrypt from 'bcrypt'
 import JwtPayload from 'src/interfaces/jwt-payload.interface'
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private configService: ConfigService
   ) {}
 
   async login(loginDTO: LoginDTO): Promise<{ token: string }> {
@@ -23,7 +25,7 @@ export class AuthService {
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { username }
 
-      const token = this.jwtService.sign(payload)
+      const token = this.jwtService.sign(payload, {expiresIn: this.configService.get('JWT_EXPIRES_IN') || '600'})
       delete user.password
       return { token }
     } else {
