@@ -6,13 +6,14 @@ import { User } from './user.entity'
 import { SignupDTO } from './dto/signupDTO'
 import { UpdateUserDto } from '../user/dto/update-user.dto'
 import { getAccountCount } from 'src/user/interfaces'
+import { basicUser } from './interfaces/basicUser.interface'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   constructor() {
     super()
   }
-  async createUser(signupDTO: SignupDTO) {
+  async createUser(signupDTO: SignupDTO): Promise<basicUser> {
     const { password } = signupDTO
 
     const salt = await bcrypt.genSalt()
@@ -36,7 +37,7 @@ export class UserRepository extends Repository<User> {
   async getUserByUsername(username: string) {
     const user = this.findOne({
       where: { username },
-      select: ['email', 'name', 'password', 'username'],
+      select: ['email', 'name', 'password', 'username', 'id', 'biography', 'profilePicture'],
     })
     return user
   }
