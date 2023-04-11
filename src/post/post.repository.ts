@@ -35,6 +35,9 @@ export class PostRepository extends Repository<Post> {
 
   async likePost(postId: number, user: User) {
     const post = await this.preload({ id: postId })
+    if (!post) {
+      throw new NotFoundException(`There is no post with id ${postId}`)
+    }
     post.likes.push(user)
     await this.save(post)
     return post
@@ -42,6 +45,9 @@ export class PostRepository extends Repository<Post> {
 
   async dislikePost(postId: number, userId: number) {
     const post = await this.preload({ id: postId })
+    if (!post) {
+      throw new NotFoundException(`There is no post with id ${postId}`)
+    }
     post.likes = post.likes.filter((user) => user.id !== userId)
     await this.save(post)
     return post
